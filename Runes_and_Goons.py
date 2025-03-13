@@ -95,11 +95,11 @@ class map(object):
                                         'East': 'Whirlpool Shrine',
                                         'North': 'Abyssal Cavern',
                                         'Item': {'name':'Water Blast',
-                                                    'damage': 15,
-                                                    'element': 1,
+                                                    'damage': 5,
+                                                    'element': 'water',
                                                     'type': 'spell'},
                                         'Enemy': {'name': 'Mermaid',
-                                                  'health': 5,
+                                                  'health': 15,
                                                   'weakness': 'fire',
                                                   'damage': 3,
                                                   'speed': 2,
@@ -284,12 +284,12 @@ class equipment_inventory(object):
             self.weapons_and_spells[equipment_name]={'type':type, 'attributes': attributes}
             #looks like {equipname:{type:,attributes:{damage:,speed:}}}
     def useHealPotion(self):
-        if self.healing_potions > 1:
+        if self.healing_potions >= 1:
             self.healing_potions -= 1
             playerinstance.health = playerinstance.max_health
-            print(f'You have {self.healing_potions} remaining\n Health restored to {playerinstance.max_health}')
+            print(f'\nYou have {self.healing_potions} remaining\n Health restored to {playerinstance.max_health}\n')
         else: 
-            print(f"No health potions remaining... :(")
+            print(f"\nNo health potions remaining... :(\n")
 
 def pickup_items():
     """after ending up in a room run pickup items to allow """
@@ -312,7 +312,7 @@ def pickup_items():
                                     'speed':mapinstance.rooms[mapinstance.current_room]['Item']['speed']}
             elif item_type == 'spell':
                 item_attributes = {'damage':mapinstance.rooms[mapinstance.current_room]['Item']['damage'],
-                                     'speed':mapinstance.rooms[mapinstance.current_room]['Item']['element']}
+                                     'element':mapinstance.rooms[mapinstance.current_room]['Item']['element']}
             else:
                 pass
 
@@ -369,7 +369,7 @@ def combat():
 
                 while Selecting_Item:
                     #"selecting item or weapon"
-                    AttackorUsePotion = input(f"Would you like to:\n1: Attack\n2: Use Health Potion ({player_inventory.healing_potions} remaining\n)")
+                    AttackorUsePotion = input(f"Would you like to:\n1: Attack\n2: Use Health Potion ({player_inventory.healing_potions} remaining)\n")
 
                     if AttackorUsePotion == "2":
                         player_inventory.useHealPotion()
@@ -382,7 +382,7 @@ def combat():
                             print(f'{name_weaponspell}: {weaponspells_dict['attributes']}')
 
                         while True: #checking for valid attack
-                            selected_attack = str(input("type name of weapon or spell: ")).title()
+                            selected_attack = str(input("\ntype name of weapon or spell: ")).title()
                             print("")
 
                             if selected_attack not in player_inventory.weapons_and_spells:
