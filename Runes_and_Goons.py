@@ -1,6 +1,7 @@
 import random
 import math
 
+gameover = False
 
 # todo 
 # combat
@@ -8,6 +9,7 @@ import math
 # player health
 # fix spells in rooms dict
 # win loss
+# player name code
 
 
 
@@ -25,12 +27,7 @@ class map(object):
     def loadnewgame(self):
         self.rooms = {'Starting Room': {'East': 'The Drowned Gate', #Home of the Game
                                         'South': 'The Embered Threshold',
-                                        'West': 'Ancient Convergence',
-                                        'Item': {'name' : 'Rusty Sword',
-                                                'damage': 5,
-                                                'speed': 1,
-                                                'type':'weapon'},
-
+                                        'West': 'Ancient Convergence'
                                         },
                                         
 
@@ -40,14 +37,15 @@ class map(object):
                                             'West': 'Stormfire Bastion',
                                             'Item': {'name': 'Fireball',
                                                      'damage': 5,
-                                                     'speed': 1,
+                                                     'element': 1,
                                                      'type': 'spell'},
                                             'Enemy': {'name': 'Goblin',
-                                                  'health': 10,
+                                                  'health': 15,
                                                     'weakness': 'water',
-                                                    'damage': 2,
-                                                    'speed': 1,
-                                                    'speech': 'Oh, you actually think you stand a chance? Cute. Now, lets see if you can dodge *this!*'}
+                                                    'damage': 3,
+                                                    'speed': 2,
+                                                    'speech': 'Oh, you actually think you stand a chance? Cute. Now, lets see if you can dodge *this!*'},
+                                            'healing potion': 2,
                                                     },
 
                     'Stormfire Bastion': {'East': 'The Embered Threshold',
@@ -56,11 +54,12 @@ class map(object):
                                                  'speed': 2,
                                                  'type': 'weapon'},
                                         'Enemy': {'name': 'Fire Elemental',
-                                                  'health': 100,
+                                                  'health': 75,
                                                   'weakness': 'water',
-                                                  'damage': 5,
-                                                  'speed': 1,
-                                                  'speech': 'You dare to challenge me? You will be reduced to ashes!'}
+                                                  'damage': 7,
+                                                  'speed': 2,
+                                                  'speech': 'You dare to challenge me? You will be reduced to ashes!'},
+                                        'healing potion': 1,
                                         },
 
                     'Magma Crucible': {'North': 'The Embered Threshold',
@@ -69,24 +68,26 @@ class map(object):
                                                  'speed': 2,
                                                  'type': 'weapon'},
                                         'Enemy': {'name': 'Lava Golem',
-                                                  'health': 150,
+                                                  'health': 120,
                                                   'weakness': 'water',
-                                                  'damage': 10,
+                                                  'damage': 12,
                                                   'speed': 1,
                                                   'speech': 'You are not worthy to face me! Prepare to be melted down!'},
+                                        'healing potion': 2,
                                         },
 
                     'Smoldering Ascent': {'West': 'The Embered Threshold',
                                         'Item': {'name':'Inferno Fang',
-                                                 'damage': 20,
-                                                 'speed': 3,
+                                                 'damage': 18,
+                                                 'speed': 2,
                                                  'type': 'weapon'},
                                         'Enemy': {'name': 'Fire Dragon',
-                                                  'health': 200,
+                                                  'health': 180,
                                                   'weakness': 'water',
-                                                  'damage': 20,
-                                                  'speed': 1,
+                                                  'damage': 15,
+                                                  'speed': 2,
                                                   'speech': 'You are brave to face me, but you will be reduced to ashes!'},
+                                        'healing potion': 2,
                                         },
 
                     'The Drowned Gate': {'West': 'Starting Room', #Water Area
@@ -94,30 +95,32 @@ class map(object):
                                         'East': 'Whirlpool Shrine',
                                         'North': 'Abyssal Cavern',
                                         'Item': {'name':'Water Blast',
-                                                    'damage': 5,
-                                                    'speed': 1,
+                                                    'damage': 15,
+                                                    'element': 1,
                                                     'type': 'spell'},
                                         'Enemy': {'name': 'Mermaid',
-                                                  'health': 10,
+                                                  'health': 5,
                                                   'weakness': 'fire',
-                                                  'damage': 2,
-                                                  'speed': 1,
+                                                  'damage': 3,
+                                                  'speed': 2,
                                                   'speech': 'You dare to challenge me? You will be drowned!'},
+                                        'healing potion': 1,
                                                                     },
                                                 
 
                     'Abyssal Cavern': {'South': 'The Drowned Gate',
                                     'Item': {'name':'Abyssal Trident',
-                                             'damage': 10,
-                                             'speed': 1,
+                                             'damage': 12,
+                                             'speed': 2,
                                              'type': 'weapon'},
                                     'Enemy': {'name': 'Siren',
-                                              'health': 100,
+                                              'health': 90,
                                               'weakness': 'fire',
-                                              'damage': 5,
-                                              'speed': 1,
+                                              'damage': 6,
+                                              'speed': 2,
                                               'speech': 'You are not worthy to face me! Prepare to be drowned!',
                                               },
+                                    'healing potion': 2,
                                     },
 
                     'Frozen Depths': {'North': 'The Drowned Gate',
@@ -126,38 +129,43 @@ class map(object):
                                              'speed': 2,
                                              'type': 'weapon'},
                                     'Enemy': {'name': 'Ice Golem',
-                                              'health': 150,
+                                              'health': 140,
                                               'weakness': 'fire',
-                                              'damage': 10,
+                                              'damage': 9,
                                               'speed': 1,
-                                              'speech': 'You are brave to face me, but you will be frozen solid!'}
+                                              'speech': 'You are brave to face me, but you will be frozen solid!'},
+                                    'healing potion': 1,
                                     },
 
                     'Whirlpool Shrine': {'West': 'The Drowned Gate',
                                         'Item': {'name':'Whirlpool Staff',
-                                                 'damage': 20,
+                                                 'damage': 16,
                                                  'speed': 3,
                                                  'type': 'weapon'},
                                         'Enemy': {'name': 'Water Elemental',
-                                                  'health': 200,
+                                                  'health': 170,
                                                   'weakness': 'fire',
-                                                  'damage': 20,
-                                                  'speed': 1,
-                                                  'speech': 'You are brave to face me, but you will be drowned!'}
+                                                  'damage': 15,
+                                                  'speed': 2,
+                                                  'speech': 'You are brave to face me, but you will be drowned!'},
+                                        'healing potion': 2,
                                         },
 
                     'Ancient Convergence': {'East': 'Starting Room',
                                             'Enemy': {'name': 'Ancient Guardian',
-                                                      'health': 1000,
+                                                      'health': 600,
                                                       'weakness': 'none',
-                                                      'damage': 50,
-                                                      'speed': 1,
-                                                      'speech': 'You have come far, but you will not pass!'}
+                                                      'damage': 25,
+                                                      'speed': 2,
+                                                      'speech': 'You have come far, but you will not pass!'},
+                                            'healing potion': 3,
                                                       },
                       #end of game area, final boss
-        }
+                    }
         self.current_room = 'Starting Room'
         self.previous_room = 'Starting Room'
+
+
 
 def move():
     """when called it'll ask the player which room they want to move to and allow them to move there
@@ -168,11 +176,13 @@ def move():
         print(f"You're in the {mapinstance.current_room}")
 
         print(f"These are the rooms connected to the room you're in: \n")
+
+
         for (nav, room) in mapinstance.rooms[mapinstance.current_room].items():
             if nav in directions:
                 print(f"{nav}: {room}")
 
-        desired_direction = str(input("\n type the direction you want to move: ")).title()
+        desired_direction = str(input("\ntype the direction you want to move: ")).title()
 
         if desired_direction in directions and desired_direction in mapinstance.rooms[mapinstance.current_room]:
             mapinstance.previous_room = mapinstance.current_room
@@ -187,7 +197,7 @@ def move():
 
 class player(object):
     """creates player object to store data"""
-    def init(self, name, health, damage, max_health):
+    def __init__(self, name, health, damage, max_health):
         self.name = name
         self.health = health
         self.damage = damage
@@ -206,6 +216,7 @@ class enemy(object):
     def attack(self,player):
         """attacks player, speed calculations will be done elsewhere"""
         player.health -= self.damage
+        print(f"{self.name} did {self.damage} damage to you")
 
     def speak(self):
         """prints the saved line that the creature would say"""
@@ -220,12 +231,15 @@ class weapons(object):
 
     def attack(self, enemy):
         enemy.health -= self.damage
+
+        print(f'{self.name} did {self.damage} damage')
         
         speed_diff = self.speed - enemy.speed
         if speed_diff > 0:
             probability_of_second_hit = 1 / (1 + math.exp((3-speed_diff)))
             if probability_of_second_hit*100 > random.randint(1,100):
                 enemy.health -= self.damage
+                print(f'{self.name} did {self.damage} damage again because of speed advantage')
         # if speed difference is great enough the weapon has a chance to hit twice.
 
 class spells(object):
@@ -240,8 +254,11 @@ class spells(object):
         """deals damage to enemy depending on elemental weakness"""
         if self.element == enemy.weakness:
             enemy.health -= self.damage*1.5
+            print(f'ELEMENTAL CRIT!!')
+            print(f'{self.name} did {self.damage*1.5} damage')
         else:
             enemy.health -= self.damage
+            print(f'{self.name} did {self.damage} damage')
 
 
 class equipment_inventory(object):
@@ -249,31 +266,39 @@ class equipment_inventory(object):
     this class will handle which equipment the player has and using the weapons"""
     def __init__(self):
         self.weapons_and_spells = {}
-        self.duplicate_itemduplicate_item = False
+        self.duplicate_item = False
         self.healing_potions = 0
 
 
     def get_equipment(self, equipment_name, type, attributes = None):
         """adds equiment based on type"""
 
-        self.duplicate_itemduplicate_item = False
+        self.duplicate_item = False
 
         for entry in self.weapons_and_spells:
-            if entry['name'] == str(equipment_name):
+            if entry == str(equipment_name):
                 print(f'you got a {equipment_name} but you already had one so it was thrown away.')
                 self.duplicate_item = True
     
         if not self.duplicate_item:
             self.weapons_and_spells[equipment_name]={'type':type, 'attributes': attributes}
-    
+            #looks like {equipname:{type:,attributes:{damage:,speed:}}}
     def useHealPotion(self):
         if self.healing_potions > 1:
             self.healing_potions -= 1
             playerinstance.health = playerinstance.max_health
             print(f'You have {self.healing_potions} remaining\n Health restored to {playerinstance.max_health}')
+        else: 
+            print(f"No health potions remaining... :(")
 
 def pickup_items():
     """after ending up in a room run pickup items to allow """
+
+    if not('Item' in mapinstance.rooms[mapinstance.current_room] or 'healing potion' in mapinstance.rooms[mapinstance.current_room]):
+            print("\nThere is no item in the room.")
+            print("-" * 50)
+            
+
     if 'Item' in mapinstance.rooms[mapinstance.current_room]:
         print(f"\n You found a {mapinstance.rooms[mapinstance.current_room]['Item']['name']}!")
         print("Do you want to pick it up? (y/n)")
@@ -283,10 +308,10 @@ def pickup_items():
             item_type = mapinstance.rooms[mapinstance.current_room]['Item']['type']
 
             if item_type == 'weapon':
-                item_attributes = {'damage':mapinstance.rooms[mapinstance.current_room]['item']['damage'],
+                item_attributes = {'damage':mapinstance.rooms[mapinstance.current_room]['Item']['damage'],
                                     'speed':mapinstance.rooms[mapinstance.current_room]['Item']['speed']}
             elif item_type == 'spell':
-                item_attributes = {'damage':mapinstance.rooms[mapinstance.current_room]['item']['damage'],
+                item_attributes = {'damage':mapinstance.rooms[mapinstance.current_room]['Item']['damage'],
                                      'speed':mapinstance.rooms[mapinstance.current_room]['Item']['element']}
             else:
                 pass
@@ -306,9 +331,7 @@ def pickup_items():
         print(f'you found {mapinstance.rooms[mapinstance.current_room]['healing potion']} healing potions!')
         del mapinstance.rooms[mapinstance.current_room]['healing potion']
     
-    if not('Item' in mapinstance.rooms[mapinstance.current_room] and 'healing potion' in mapinstance.rooms[mapinstance.current_room]):
-            print("There is no item in the room.")
-            print("-" * 50)
+    
 
 
 
@@ -336,28 +359,79 @@ def combat():
         if FightorFlee == 'f':
             """fight code"""
             fighting = True
-                                # isn't done
-                                #select item or heal, attack, take damage, check healths, loop 
+
+            print("")
+            current_enemy.speak()
+            print("")
+                            
             while fighting:
-                while True:
-                    "selecting item or weapon"
-                    AttackorUsePotion = input("Would you like to:\n1: Attack\n2: Use Health Potion")
+                Selecting_Item = True
 
+                while Selecting_Item:
+                    #"selecting item or weapon"
+                    AttackorUsePotion = input(f"Would you like to:\n1: Attack\n2: Use Health Potion ({player_inventory.healing_potions} remaining\n)")
+
+                    if AttackorUsePotion == "2":
+                        player_inventory.useHealPotion()
+                    else:
+                        #"""attack is chosen and handling attack"""
+                        print(f'\n Available Weapons and Spells:')
+
+                        #listing the names of weapons and spells and their values
+                        for name_weaponspell, weaponspells_dict in player_inventory.weapons_and_spells.items():
+                            print(f'{name_weaponspell}: {weaponspells_dict['attributes']}')
+
+                        while True: #checking for valid attack
+                            selected_attack = str(input("type name of weapon or spell: ")).title()
+                            print("")
+
+                            if selected_attack not in player_inventory.weapons_and_spells:
+                                print('Please type valid weapon or spell\n')
+                            else:
+                                if player_inventory.weapons_and_spells[selected_attack]['type'] == 'weapon':
+                                    # extremely long function instanciating weapon with values from inventory
+                                    # the spells version is the sambe but it instanciates element
+                                    current_attack = weapons(selected_attack,
+                                                             player_inventory.weapons_and_spells[selected_attack]['attributes']['damage'],
+                                                             player_inventory.weapons_and_spells[selected_attack]['attributes']['speed'])
+                                    
+                                else:
+                                    current_attack = spells(selected_attack,
+                                                             player_inventory.weapons_and_spells[selected_attack]['attributes']['damage'],
+                                                             player_inventory.weapons_and_spells[selected_attack]['attributes']['element'])
+                                #finally does the attack after all the menuing
+                                current_attack.attack(current_enemy)
+                                print(f"{current_enemy.name} has {current_enemy.health} health remaining\n")
+                                break
+
+                        Selecting_Item = False
+
+                #after attacking enemy
+                if current_enemy.health <= 0:
+                    #check if enemy is killed then leave combat
+                    print(f"{current_enemy.name} killed")
+                    print("-"*50)
+                    del mapinstance.rooms[mapinstance.current_room]['Enemy']
+                    fighting = False
                     break
+                
+                #enemy attacks back
+                current_enemy.attack(playerinstance)
+                print(f"You have {playerinstance.health} health\n")
 
+                if playerinstance.health <= 0:
+                    #player died
 
-
-
-                fighting = False
-
+                    print(f"you died to {current_enemy.name}")
+                    gameover = True
+                    fighting = False
 
         else:
             """flee code"""
             mapinstance.current_room = mapinstance.previous_room
-            print(f'You\'ve fled to the previous room\nCurrent Room: {mapinstance.current_room}')
+            print(f'\nYou\'ve fled to the previous room\nCurrent Room: {mapinstance.current_room}')
             return
         
-        #win loss handling
 
     else:
         print(f"There's no enemy in this room")
@@ -373,8 +447,21 @@ def combat():
 # Start of main code
 gameover = False
 mapinstance = map()
-playerinstance = player(name= ,health= ,damage= , max_health=)    #need to do
 player_inventory = equipment_inventory()
 
+player_inventory.get_equipment('Rusty Sword','weapon',{'damage': 5, 'speed': 1})
+
+player_name = str(input("What is your name: "))
+playerinstance = player(name= player_name,health= 300,damage= 10, max_health= 300)  
+
+neworloadgame = str(input('Load or New Game:\n1: New Game\n2: Load from save\n'))
+if not(neworloadgame == '2'):
+    mapinstance.loadnewgame()
+else:
+    mapinstance.loadsavedgame()
 
 
+while not gameover:
+    move()
+    combat()
+    pickup_items()
