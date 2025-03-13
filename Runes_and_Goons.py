@@ -314,6 +314,8 @@ def pickup_items():
 
 
 def combat():
+    global gameover
+
     if "Enemy" in mapinstance.rooms[mapinstance.current_room]:
         current_enemy = enemy(mapinstance.rooms[mapinstance.current_room]["Enemy"]["name"],
                               mapinstance.rooms[mapinstance.current_room]["Enemy"]["health"],
@@ -334,8 +336,19 @@ def combat():
         if FightorFlee == 'f':
             """fight code"""
             fighting = True
+                                # isn't done
+                                #select item or heal, attack, take damage, check healths, loop 
             while fighting:
-                if player
+                while True:
+                    "selecting item or weapon"
+                    AttackorUsePotion = input("Would you like to:\n1: Attack\n2: Use Health Potion")
+
+                    break
+
+
+
+
+                fighting = False
 
 
         else:
@@ -358,6 +371,7 @@ def combat():
 
 
 # Start of main code
+gameover = False
 mapinstance = map()
 playerinstance = player(name= ,health= ,damage= , max_health=)    #need to do
 player_inventory = equipment_inventory()
