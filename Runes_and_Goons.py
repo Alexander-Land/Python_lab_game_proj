@@ -37,7 +37,7 @@ class map(object):
                                             'West': 'Stormfire Bastion',
                                             'Item': {'name': 'Fireball',
                                                      'damage': 5,
-                                                     'element': 1,
+                                                     'element': 'fire',
                                                      'type': 'spell'},
                                             'Enemy': {'name': 'Goblin',
                                                   'health': 15,
@@ -452,7 +452,7 @@ player_inventory = equipment_inventory()
 player_inventory.get_equipment('Rusty Sword','weapon',{'damage': 5, 'speed': 1})
 
 player_name = str(input("What is your name: "))
-playerinstance = player(name= player_name,health= 300,damage= 10, max_health= 300)  
+playerinstance = player(name= player_name,health= 3,damage= 10, max_health= 300)  
 
 neworloadgame = str(input('Load or New Game:\n1: New Game\n2: Load from save\n'))
 if not(neworloadgame == '2'):
@@ -464,4 +464,6 @@ else:
 while not gameover:
     move()
     combat()
+    if gameover:
+        break
     pickup_items()
