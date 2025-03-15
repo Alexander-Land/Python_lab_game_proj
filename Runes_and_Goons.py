@@ -27,6 +27,8 @@ class map(object):
     def loadsavedgame(self):
         global game_data
         self.rooms = game_data['map']
+        self.current_room = game_data['current room']
+        self.previous_room = game_data['previous room']
 
     def loadnewgame(self):
         self.rooms = {'Starting Room': {'East': 'The Drowned Gate', #Home of the Game
@@ -449,6 +451,8 @@ def combat():
 
 def saver():
     game_data = {'map': mapinstance.rooms,
+    'current room' : mapinstance.current_room,
+    'previous room' : mapinstance.previous_room,
     'equipment': player_inventory.weapons_and_spells,
     'healing potions':player_inventory.healing_potions,
     'player health': playerinstance.health}
