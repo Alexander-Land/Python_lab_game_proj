@@ -1,5 +1,8 @@
 import random
 import math
+import json
+
+import os
 
 gameover = False
 
@@ -22,7 +25,8 @@ class map(object):
         self.rooms = {}
 
     def loadsavedgame(self):
-        pass #open json and fill self.rooms
+        global game_data
+        self.rooms = game_data['map']
 
     def loadnewgame(self):
         self.rooms = {'Starting Room': {'East': 'The Drowned Gate', #Home of the Game
@@ -203,6 +207,9 @@ class player(object):
         self.damage = damage
         self.max_health = max_health
 
+    def loader(self):
+        self.health = game_data['player health']
+
 class enemy(object):
     """creates enemy and manages damage from enemies"""
     def __init__(self,name,health,weakness,damage,speed,speech=None):
@@ -291,6 +298,10 @@ class equipment_inventory(object):
         else: 
             print(f"\nNo health potions remaining... :(\n")
 
+    def loader(self):
+        self.weapons_and_spells = game_data['equipment']
+        self.healing_potions = game_data['healing potions']
+
 def pickup_items():
     """after ending up in a room run pickup items to allow """
 
@@ -331,8 +342,6 @@ def pickup_items():
         print(f'you found {mapinstance.rooms[mapinstance.current_room]['healing potion']} healing potions!')
         del mapinstance.rooms[mapinstance.current_room]['healing potion']
     
-    
-
 
 
 
@@ -438,13 +447,25 @@ def combat():
                
 
 
+def saver():
+    game_data = {'map': mapinstance.rooms,
+    'equipment': player_inventory.weapons_and_spells,
+    'healing potions':player_inventory.healing_potions,
+    'player health': playerinstance.health}
+    with open('game_data.json', 'w') as json_file:
+        json.dump(game_data, json_file, indent=4)
 
-
+def loader():
+    global game_data
+    with open('game_data.json') as file:
+        game_data = json.load(file)
+        print(game_data)
 
 
 
 
 # Start of main code
+game_data = {}
 gameover = False
 mapinstance = map()
 player_inventory = equipment_inventory()
@@ -452,13 +473,24 @@ player_inventory = equipment_inventory()
 player_inventory.get_equipment('Rusty Sword','weapon',{'damage': 5, 'speed': 1})
 
 player_name = str(input("What is your name: "))
-playerinstance = player(name= player_name,health= 3,damage= 10, max_health= 300)  
+playerinstance = player(name= player_name,health= 300,damage= 10, max_health= 300)  
 
-neworloadgame = str(input('Load or New Game:\n1: New Game\n2: Load from save\n'))
-if not(neworloadgame == '2'):
-    mapinstance.loadnewgame()
-else:
-    mapinstance.loadsavedgame()
+while 1:
+    neworloadgame = str(input('Load or New Game:\n1: New Game\n2: Load from save\n'))
+    if not(neworloadgame == '2'):
+        mapinstance.loadnewgame()
+        break
+    else:
+        try:
+            loader()
+            mapinstance.loadsavedgame()
+            player_inventory.loader()
+            playerinstance.loader()
+            print('game successfully loaded\n')
+            break
+        except:
+            print('game did not load\n')
+
 
 
 while not gameover:
@@ -467,3 +499,4 @@ while not gameover:
     if gameover:
         break
     pickup_items()
+    saver()
