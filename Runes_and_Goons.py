@@ -1,3 +1,5 @@
+#Alexander Land and Maggie Tapia
+
 import random
 import math
 import json
