@@ -292,6 +292,7 @@ class equipment_inventory(object):
         if not self.duplicate_item:
             self.weapons_and_spells[equipment_name]={'type':type, 'attributes': attributes}
             #looks like {equipname:{type:,attributes:{damage:,speed:}}}
+            
     def useHealPotion(self):
         if self.healing_potions >= 1:
             self.healing_potions -= 1
@@ -504,3 +505,6 @@ while not gameover:
         break
     pickup_items()
     saver()
+
+
+print('\n\nGAME OVER\n\n')
